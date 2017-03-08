@@ -45,12 +45,43 @@ class TestController extends \Phalcon\Mvc\Controller
     }*/
 
     public function page1Action(){
-
+        $this->view->disable();
+        echo"Page1";
+        echo "<div id='page2'></div>";
+        $this->jquery->get("test/page2","#page2");
+        echo $this->jquery->compile();
     }
 
     public function page2Action(){
 
     }
 
+    /*Agit sur Page1Action (le code de page 1 est ecrit comme si page1 n'existait pas )*/
+    public function getCascade(){
+        $semantic=$this->jquery->semantic();
+        $bt = $semantic->htmlButton("btLoad","Chargement");
+        $bt -> getOnClick("test/page1","#page1");
+    }
+
+
+    public function postFormAction(){
+        $form=$this->semantic->htmlForm("frm1");
+        $form->addInput("firstname","First Name");
+        $form->addInput("lastname","Last Name");
+        $form->addButton("btValider","Submit");
+        echo $form;
+        $this->semantic->htmlMessage("pageContent");
+        $form->submitOnClick("btValider","test/postReponse","#div");
+        echo $this->semantic->htmlDivider("div","");
+        echo $this->jquery->compile($this->view);
+    }
+
+    public function postReponseAction()
+    {
+        if(!empty($_POST['firstname']) && !empty($_POST['lastname'])){
+            echo "Ok";
+        }else
+            echo "pas ok";
+    }
 }
 
